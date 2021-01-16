@@ -29,6 +29,8 @@ namespace WebCams.Controllers
     public async Task<ActionResult> Get(int id)
     {
       var imageData = await _camService.GetCamImage(id);
+      if (imageData == null)
+        return NotFound();
       return File(imageData, "image/jpeg");
     }
   }
