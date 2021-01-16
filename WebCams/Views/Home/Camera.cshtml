@@ -1,0 +1,8 @@
+﻿@model CameraViewModel
+@{
+  ViewData["Title"] = "Camera #" + Model.CameraNumber;
+}
+
+<div class="text-center">
+  <img alt="load new logo" src="/Api/Image/@Model.CameraNumber" class="rescale">
+</div>
