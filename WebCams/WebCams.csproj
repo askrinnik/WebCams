@@ -5,4 +5,8 @@
     <UserSecretsId>a29ec6e8-6392-43b5-86b0-f2ae441a4c2b</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="NLog.Web.AspNetCore" Version="4.10.0" />
+  </ItemGroup>
+
 </Project>
