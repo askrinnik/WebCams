@@ -19,7 +19,7 @@
     </Reference>
   </ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <Exec Command="xcopy $(ProjectDir)\lib\x64\*.*  $(TargetDir)  /Y /E /C /F&#xA;" />
   </Target>
 
