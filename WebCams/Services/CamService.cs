@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using RtspClientSharpCore;
 using RtspClientSharpCore.RawFrames;
@@ -14,10 +15,12 @@ namespace WebCams.Services
   public class CamService
   {
     private readonly ILogger<CamService> _logger;
+    private readonly IConfiguration _configuration;
 
-    public CamService(ILogger<CamService> logger)
+    public CamService(ILogger<CamService> logger, IConfiguration configuration)
     {
       _logger = logger;
+      _configuration = configuration;
     }
 
     public async Task<byte[]> GetCamImage(int camNum)
@@ -27,19 +30,21 @@ namespace WebCams.Services
       if(camNum == 1)
       {
         // Reolink RLC-410W
-        const string address = "http://192.168.0.189/cgi-bin/api.cgi?cmd=Snap&channel=0&user=MirrorBoy&password=123454321";
+        var address = _configuration["CameraAddresses:1"];
         return await new WebClient().DownloadDataTaskAsync(address);
-
-        // alternative
-        //const string address = "rtsp://MirrorBoy:123454321@192.168.0.189/h264Preview_01_main";
-        //return await GetFromRtspClient(address, 2560, 1440);
       }
 
       if (camNum == 2)
       {
         //IP Camera Sricam SP012
-        const string address = "rtsp://192.168.0.90:554/onvif1";
+        var address = _configuration["CameraAddresses:2"];
         return await GetFromRtspClient(address, 1280, 738);
+      }
+      if (camNum == 3)
+      {
+        // Reolink RLC-410W RTSP
+        var address = _configuration["CameraAddresses:3"];
+        return await GetFromRtspClient(address, 2560, 1440);
       }
 
       return null;
