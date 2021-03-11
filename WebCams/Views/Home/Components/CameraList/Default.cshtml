@@ -1,0 +1,8 @@
+﻿@model WebCams.Services.Camera[]
+
+@foreach (var camera in Model)
+{
+  <li class="nav-item">
+    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Camera" asp-route-cameraNumber="@camera.Id">@camera.Title</a>
+  </li>
+}

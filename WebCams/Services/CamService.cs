@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,28 +27,18 @@ namespace WebCams.Services
     public async Task<byte[]> GetCamImage(int camNum)
     {
       _logger.LogInformation($"Image #{camNum} is requested");
+      var cameras = _configuration.ReadCameras();
+      
+      var selectedCamera = cameras.SingleOrDefault(c => c.Id == camNum);
 
-      if(camNum == 1)
-      {
-        // Reolink RLC-410W
-        var address = _configuration["CameraAddresses:1"];
-        return await new WebClient().DownloadDataTaskAsync(address);
-      }
+      _logger.LogInformation($"Getting image from {selectedCamera?.Address}");
 
-      if (camNum == 2)
+      return selectedCamera?.Format switch
       {
-        //IP Camera Sricam SP012
-        var address = _configuration["CameraAddresses:2"];
-        return await GetFromRtspClient(address, 1280, 738);
-      }
-      if (camNum == 3)
-      {
-        // Reolink RLC-410W RTSP
-        var address = _configuration["CameraAddresses:3"];
-        return await GetFromRtspClient(address, 2560, 1440);
-      }
-
-      return null;
+        Format.Jpg => await new WebClient().DownloadDataTaskAsync(selectedCamera.Address),
+        Format.Rtsp => await GetFromRtspClient(selectedCamera.Address, selectedCamera.ImageWidth, selectedCamera.ImageHeight),
+        _ => null
+      };
     }
 
     private static async Task<byte[]> GetFromRtspClient(string address, int streamWidth, int streamHeight)
